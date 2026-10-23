@@ -1,9 +1,22 @@
 services:
   - type: web
-    name: why-and-bec
+    name: yn-game
     runtime: node
     plan: free
-    branch: "main"
-    buildCommand: "npm install"
-    startCommand: npm start
-    autoDeployTrigger: "off"
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: SESSION_SECRET
+        generateValue: true
+      # Fill these in the Render dashboard when you create your X app:
+      # - key: X_CLIENT_ID
+      #   sync: false
+      # - key: X_CLIENT_SECRET
+      #   sync: false
+      # - key: X_CALLBACK_URL
+      #   sync: false   # https://<your-service>.onrender.com/auth/x/callback
+      # - key: XAI_API_KEY
+      #   sync: false
+      # - key: XAI_MODEL
+      #   value: grok-3-mini
