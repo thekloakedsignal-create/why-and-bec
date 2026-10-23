@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: why-and-bec
+    runtime: node
+    plan: free
+    branch: "main"
+    buildCommand: "npm install"
+    startCommand: npm start
+    autoDeployTrigger: "off"
