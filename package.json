@@ -1,0 +1,19 @@
+{
+  "name": "yn-game",
+  "version": "1.0.0",
+  "description": "YN — the Why & Because party game. Real-time multiplayer for 3-5 players with X sign-in and optional xAI inspiration.",
+  "main": "server.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "socket.io": "^4.7.5"
+  }
+}
