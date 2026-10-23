@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>YN — the Why &amp; Because game</title>
+  <meta name="description" content="Write a WHY. Answer a stranger's WHY with a BECAUSE. Vote for the funniest. 3–5 players, real-time, in your browser." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>❓</text></svg>" />
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- AUTH -->
+  <main id="screen-auth" class="screen center">
+    <div class="card auth-card">
+      <div class="logo">Y<span class="q">?</span>N<span class="b">!</span></div>
+      <p class="tagline">Write a <b>WHY</b> question.<br />Get a stranger's question. Answer it with a <b>BECAUSE</b>.<br />Vote for the funniest. Chaos guaranteed.</p>
+      <a id="btn-x" class="btn btn-x" href="/auth/x">Sign in with X</a>
+      <div id="devLogin" class="dev-login hidden">
+        <label class="label" for="devName">or play with a nickname</label>
+        <div class="row">
+          <input id="devName" maxlength="20" placeholder="Your name" autocomplete="off" />
+          <button id="btnDev" class="btn btn-primary">Play</button>
+        </div>
+      </div>
+      <p id="authError" class="error"></p>
+    </div>
+  </main>
+
+  <!-- HOME (create / join) -->
+  <main id="screen-home" class="screen center hidden">
+    <div class="card auth-card">
+      <div class="logo small">
+        <span id="meAvatar" class="avatar"></span>
+        <span id="meName"></span>
+        <button id="btnLogout" class="link" title="Sign out">sign out</button>
+      </div>
+      <h2>Get the party started</h2>
+      <button id="btnCreate" class="btn btn-primary big">Create a room</button>
+      <div class="divider"><span>or join one</span></div>
+      <div class="row">
+        <input id="joinCode" maxlength="4" placeholder="CODE" autocomplete="off" class="code-input" />
+        <button id="btnJoin" class="btn btn-primary">Join</button>
+      </div>
+      <p class="hint">Rooms need <b>3–5 players</b>. Play testing solo? Open this site in 3 browser tabs and make 3 nicknames.</p>
+    </div>
+  </main>
+
+  <!-- GAME -->
+  <main id="screen-game" class="screen hidden">
+    <header class="game-header">
+      <div class="room-pill" id="roomPill" title="Tap to copy room code">Room <b id="roomCode">····</b> 📋</div>
+      <div class="round-pill" id="roundPill">Round 1/3</div>
+      <div class="timer" id="timer"></div>
+    </header>
+
+    <div id="leaderboard" class="leaderboard"></div>
+
+    <!-- LOBBY -->
+    <section id="phase-lobby" class="phase card hidden">
+      <h2>Lobby</h2>
+      <p class="hint">Share the room code — friends join at this same URL.</p>
+      <div id="lobbyPlayers" class="player-list"></div>
+      <div id="roundsRow" class="row center-row">
+        <label class="label" for="rounds">Rounds</label>
+        <input id="rounds" type="number" min="1" max="8" value="3" />
+      </div>
+      <button id="btnStart" class="btn btn-primary big">Start game</button>
+      <p id="lobbyHint" class="hint"></p>
+      <button id="btnLeaveLobby" class="link">leave room</button>
+    </section>
+
+    <!-- WHY -->
+    <section id="phase-why" class="phase card hidden">
+      <h2>Round <span class="roundNow"></span>: Write a WHY</h2>
+      <p class="hint">Ask something gloriously weird. <b>Someone else</b> will have to justify it.</p>
+      <textarea id="whyInput" rows="2" maxlength="160" placeholder="Why do pigeons secretly run the government?"></textarea>
+      <div class="row">
+        <button id="btnInspire" class="btn btn-ghost hidden">✨ Inspire me</button>
+        <button id="btnSubmitWhy" class="btn btn-primary">Submit WHY</button>
+      </div>
+      <p id="whyStatus" class="hint"></p>
+    </section>
+
+    <!-- BECAUSE -->
+    <section id="phase-because" class="phase card hidden">
+      <h2>Now answer with a BECAUSE</h2>
+      <p class="hint">A mystery player asked… (you'll find out who later)</p>
+      <div class="question-card" id="receivedQuestion"></div>
+      <textarea id="becauseInput" rows="2" maxlength="160" placeholder="Because the moon is made of expired cheese…"></textarea>
+      <div class="row">
+        <button id="btnSubmitBecause" class="btn btn-primary">Submit BECAUSE</button>
+      </div>
+      <p id="becauseStatus" class="hint"></p>
+    </section>
+
+    <!-- REVEAL -->
+    <section id="phase-reveal" class="phase card hidden">
+      <h2>👀 The results are in…</h2>
+      <div id="revealList" class="combo-list"></div>
+      <p class="hint">Voting opens in a moment…</p>
+    </section>
+
+    <!-- VOTE -->
+    <section id="phase-vote" class="phase card hidden">
+      < 힐h2>Vote for the funniest BECAUSE</h2>
+      <p class="hint">Tap your favorite. You can't vote for your own.</p>
+      <div id="voteList" class="combo-list"></div>
+      <p id="voteStatus" class="hint"></p>
+    </section>
+
+    <!-- ROUND END -->
+    <section id="phase-roundEnd" class="phase card hidden">
+      <h2 id="roundEndTitle">Round results 🏆</h2>
+      <div id="resultList" class="combo-list"></div>
+      <div id="roundEndActions"></div>
+    </section>
+
+    <!-- FINAL -->
+    <section id="phase-final" class="phase card hidden">
+      <h2>Final scores 🎉</h2>
+      <div id="finalBoard" class="player-list big-list"></div>
+      <p id="finalWinner" class="winner-line"></p>
+      <div class="row">
+        <button id="btnPlayAgain" class="btn btn-primary hidden">Play again</button>
+        <button id="btnLeaveFinal" class="btn btn-ghost">Leave room</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
